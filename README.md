@@ -10,7 +10,7 @@ transformar número em painel navegável, sempre no mesmo formato visual.
 No Claude Code, digite:
 
 ```
-/plugin marketplace add platformbuilders/pb-claude-skills
+/plugin marketplace add maxsoncoelho-builders/pb-claude-skills
 ```
 
 ```
