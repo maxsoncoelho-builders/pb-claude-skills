@@ -1,0 +1,14 @@
+{
+  "name": "platform-builders",
+  "description": "Skills internas da Platform Builders para Claude Code.",
+  "owner": {
+    "name": "Platform Builders"
+  },
+  "plugins": [
+    {
+      "name": "dashboards",
+      "source": "./plugins/dashboards",
+      "description": "Dois jeitos de virar numero em painel: a partir de um CSV (dash csv) ou a partir de metricas que voce fornece (dash metricas). Saida e um artifact interativo, com filtro de periodo, valores visiveis e tabela."
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "name": "dashboards",
+  "version": "1.0.0",
+  "description": "Painel interativo a partir de um CSV (dash csv) ou de metricas fornecidas (dash metricas). Nenhum numero estimado; PII nunca publicada; confirmacao antes de publicar."
+}

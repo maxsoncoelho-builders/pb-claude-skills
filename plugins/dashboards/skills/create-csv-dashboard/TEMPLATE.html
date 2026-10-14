@@ -1,0 +1,256 @@
+<title>Nome curto do dashboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    --bg: #f5f7f8;
+    --surface: #ffffff;
+    --fg: #14232b;
+    --muted: #5b6b73;
+    --line: #dde4e7;
+    --grid: #eaeff1;
+    --accent: #0f7c8c;
+    --accent-soft: #d3ecef;
+    --good: #1d8a4e;
+    --warn: #b26a00;
+    --warn-soft: #fbf0dc;
+    --bad: #c23b3b;
+    --font-display: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e171b;
+      --surface: #152227;
+      --fg: #e4ecef;
+      --muted: #93a4ab;
+      --line: #26363d;
+      --grid: #1e2c32;
+      --accent: #4cc3d2;
+      --accent-soft: #173a40;
+      --good: #4cc488;
+      --warn: #e8a546;
+      --warn-soft: #33281a;
+      --bad: #ef7070;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0e171b;
+    --surface: #152227;
+    --fg: #e4ecef;
+    --muted: #93a4ab;
+    --line: #26363d;
+    --grid: #1e2c32;
+    --accent: #4cc3d2;
+    --accent-soft: #173a40;
+    --good: #4cc488;
+    --warn: #e8a546;
+    --warn-soft: #33281a;
+    --bad: #ef7070;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 400 15px/1.55 var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 28px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  h1 { font-family: var(--font-display); font-size: 27px; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+
+  .eyebrow {
+    font-family: var(--font-data);
+    font-size: 12px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .sub { color: var(--muted); margin: 0; max-width: 62ch; }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+  .kpi .lbl { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .kpi .val {
+    font-family: var(--font-data);
+    font-size: 30px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.02em;
+  }
+  .kpi .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); }
+
+  .chip {
+    font-family: var(--font-data);
+    font-size: 12px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    white-space: nowrap;
+  }
+  .chip.up { color: var(--good); }
+  .chip.down { color: var(--bad); }
+  .chip.flat { color: var(--muted); }
+  .chip.na { color: var(--warn); }
+
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 18px 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+  .panel.full { grid-column: 1 / -1; }
+  .panel h2 { font-family: var(--font-display); font-size: 17px; font-weight: 600; margin: 0; }
+  .panel .ph { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+  .panel .tot { font-family: var(--font-data); font-size: 12.5px; color: var(--muted); }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+
+  .chart { position: relative; width: 100%; }
+  .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+  .note { font-size: 13px; color: var(--muted); margin: 0; }
+
+  .flag {
+    background: var(--warn-soft);
+    color: var(--fg);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    display: flex;
+    gap: 8px;
+  }
+  .flag b { color: var(--warn); }
+
+  /* Funil / ranking: rótulo, barra proporcional, valor alinhado à direita. */
+  .steps { display: flex; flex-direction: column; gap: 6px; }
+  .step { display: grid; grid-template-columns: 90px 1fr 52px; gap: 10px; align-items: center; font-size: 13px; }
+  .step .bar { height: 10px; background: var(--grid); border-radius: 5px; overflow: hidden; }
+  .step .bar span { display: block; height: 100%; background: var(--accent); opacity: .85; border-radius: 5px; }
+  .step .bar span.loss { background: var(--bad); }
+  .step .n { font-family: var(--font-data); text-align: right; font-variant-numeric: tabular-nums; }
+
+  .scroll { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 420px; }
+  th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+
+  footer {
+    font-size: 12.5px;
+    color: var(--muted);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-top: 1px solid var(--line);
+    padding-top: 14px;
+  }
+
+  @media (max-width: 880px) {
+    .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 420px) {
+    .wrap { padding-inline: 16px; }
+    .kpi .val { font-size: 25px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Fonte · recorte</div>
+    <h1>A leitura principal, em uma frase</h1>
+    <p class="sub">O que o dado mostra e por que importa agora.</p>
+  </header>
+
+  <div class="flag"><b>Limite</b><span>O que este recorte não permite concluir.</span></div>
+
+  <section class="kpis">
+    <div class="kpi">
+      <span class="lbl">Métrica</span>
+      <span class="val">0,00</span>
+      <span class="meta"><span class="chip up">+0,0%</span> vs. período anterior</span>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="panel">
+      <div class="ph">
+        <h2>Série temporal</h2>
+        <span class="tot">total 0.000</span>
+      </div>
+      <div class="chart">
+        <svg viewBox="0 0 320 120" role="img" aria-label="Descreva a série em texto">
+          <line x1="0" y1="100" x2="320" y2="100" stroke="var(--line)" />
+          <polyline fill="none" stroke="var(--accent)" stroke-width="2"
+                    points="0,80 80,62 160,70 240,40 320,32" />
+        </svg>
+      </div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>Métrica</span></div>
+      <p class="note">Como ler: o que o eixo representa e o que foi excluído.</p>
+    </div>
+
+    <div class="panel">
+      <div class="ph">
+        <h2>Corte por dimensão</h2>
+        <span class="tot">base 0.000 linhas</span>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <span>Categoria</span>
+          <div class="bar"><span style="width:72%"></span></div>
+          <span class="n">0.000</span>
+        </div>
+      </div>
+      <p class="note">Top N por volume; a cauda foi agrupada em “outros”.</p>
+    </div>
+
+    <div class="panel full">
+      <div class="ph"><h2>Detalhe</h2></div>
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Dimensão</th><th class="num">Valor</th><th class="num">%</th></tr></thead>
+          <tbody><tr><td>—</td><td class="num">0</td><td class="num">0%</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p><b>Fontes:</b> arquivo, data de exportação, filtros aplicados.</p>
+    <p><b>Fora do escopo:</b> o que o CSV não cobre e não foi estimado.</p>
+  </footer>
+</div>
